@@ -1,19 +1,20 @@
 # follow each of these steps 
 
-sudo apt update && sudo apt upgrade -y
-sudo systemctl reboot
-sudo apt install postgresql postgresql-client -y
-sudo systemctl status postgresql*
-sudo apt update -y
-wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
-sudo apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
-sudo wget -O - https://nightly.odoo.com/odoo.key | sudo apt-key add -
-sudo echo "deb http://nightly.odoo.com/14.0/nightly/deb/ ./" | sudo tee /etc/apt/sources.list.d/odoo.list
-sudo apt update && sudo apt install odoo -y
-sudo systemctl status odoo
-sudo systemctl enable --now odoo
-sudo apt -y install nginx
-sudo nano /etc/nginx/conf.d/odoo.conf
+1. sudo apt update && sudo apt upgrade -y
+2. sudo systemctl reboot
+3. sudo apt install postgresql postgresql-client -y
+4. sudo systemctl status postgresql*
+5. sudo apt update -y
+6. wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+7. sudo apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
+8. sudo wget -O - https://nightly.odoo.com/odoo.key | sudo apt-key add -
+9. sudo echo "deb http://nightly.odoo.com/14.0/nightly/deb/ ./" | sudo tee /etc/apt/sources.list.d/odoo.list
+10. sudo apt update && sudo apt install odoo -y
+11. sudo systemctl status odoo
+12. sudo systemctl enable --now odoo
+13. sudo apt -y install nginx
+14. sudo nano /etc/nginx/conf.d/odoo.conf
+
 
 ## Copy to odoo.conf
 ########################
@@ -66,10 +67,10 @@ gzip_types text/css text/less text/plain text/xml application/xml application/js
 gzip on;
 }
 ###################
-sudo nginx -t
+15. sudo nginx -t
 
 # create SSL Certificate
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+16. openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
 
 # Restart NGINX
-sudo systemctl restart nginx
+17. sudo systemctl restart nginx
