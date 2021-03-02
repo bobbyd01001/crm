@@ -1,0 +1,75 @@
+# follow each of these steps 
+
+sudo apt update && sudo apt upgrade -y
+sudo systemctl reboot
+sudo apt install postgresql postgresql-client -y
+sudo systemctl status postgresql*
+sudo apt update -y
+wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.focal_amd64.deb
+sudo apt install ./wkhtmltox_0.12.6-1.focal_amd64.deb
+sudo wget -O - https://nightly.odoo.com/odoo.key | sudo apt-key add -
+sudo echo "deb http://nightly.odoo.com/14.0/nightly/deb/ ./" | sudo tee /etc/apt/sources.list.d/odoo.list
+sudo apt update && sudo apt install odoo -y
+sudo systemctl status odoo
+sudo systemctl enable --now odoo
+sudo apt -y install nginx
+sudo nano /etc/nginx/conf.d/odoo.conf
+
+## Copy to odoo.conf
+########################
+# Odoo Upstreams
+upstream server/domainname {
+server 127.0.0.1:8069;
+}
+
+# http to https redirection
+server {
+listen 80;
+server_name servername;
+return 301 https://servername$request_uri;
+}
+server {
+listen 443 ssl;
+server_name bwitcrm.beawit.net;
+access_log /var/log/nginx/odoo_access.log;
+error_log /var/log/nginx/odoo_error.log;
+
+# SSL
+ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+
+# Proxy settings
+proxy_read_timeout 720s;
+proxy_connect_timeout 720s;
+proxy_send_timeout 720s;
+proxy_set_header X-Forwarded-Host $host;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+proxy_set_header X-Real-IP $remote_addr;
+
+# Request for root domain
+location / {
+proxy_redirect off;
+proxy_pass http://servername;
+}
+
+# Cache static files
+location ~* /web/static/ {
+proxy_cache_valid 200 90m;
+proxy_buffering on;
+expires 864000;
+proxy_pass http://servername;
+}
+
+# Gzip
+gzip_types text/css text/less text/plain text/xml application/xml application/json application/javascript;
+gzip on;
+}
+###################
+sudo nginx -t
+
+# create SSL Certificate
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+
+# Restart NGINX
+sudo systemctl restart nginx
